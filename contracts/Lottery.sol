@@ -46,6 +46,8 @@ contract Lottery {
             _;
         }
 
+/** -------- CONSTRUCTOR -------- **/
+
    function Lottery(bytes32 winningGuessHash) public {
       owner = msg.sender;
       token_price = 1.0 ether;
@@ -54,6 +56,11 @@ contract Lottery {
 
    }
 
+
+/** -------- FUNCTIONS -------- **/
+
+
+// function to buy token in exchange of ethers
    function buyTokens(address user) public payable gameOngoing {
 
        if (msg.value / token_price < 1 ) throw;
@@ -64,6 +71,8 @@ contract Lottery {
         participants.push(user);
     
    }
+
+// function to makeguess and update the winner address
 
    function makeGuess(uint guess) public gameOngoing {
 
@@ -77,12 +86,14 @@ contract Lottery {
         tokenHolders[msg.sender] -= 1;
 
    }
-    
+
    function winnerAddress() private isGameclosed returns (address) {
        return winningAddress;
    }
 
-   function getPrice() public {
+// function is called after game is closed and send 50% total contract value to winner
+
+   function getPrice() public isGameclosed {
        winner = winnerAddress();
        if ( winner == msg.sender && contractBalance != 0) {
             winner.transfer(contractBalance/2);
